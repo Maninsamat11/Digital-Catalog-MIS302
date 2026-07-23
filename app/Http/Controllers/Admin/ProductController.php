@@ -67,26 +67,22 @@ class ProductController extends Controller
     }
 
     public function update(Request $request, Product $product)
-    {
-        $data = $request->validate([
-            'category_id'    => 'required|exists:categories,id',
-            'product_name'   => 'required|string|max:255',
-            'brand'          => 'required|string|max:255',
-            'description'    => 'required|string',
-            'price'          => 'required|numeric|min:0',
-            'stock_quantity' => 'required|integer|min:0',
-            'product_image'  => 'nullable|image|max:4096',
-            'status'         => 'required|in:available,out_of_stock',
-        ]);
+{
+    $data = $request->validate([
+        'product_name'   => 'required|string|max:255',
+        'category_id'    => 'required|exists:categories,id',
+        'price'          => 'required|numeric',
+        'stock_quantity' => 'required|integer',
+        'product_image'  => 'nullable|string', // Change from 'image' to 'string'
+        'description'    => 'nullable|string',
+        'status'         => 'required|in:available,out_of_stock',
+    ]);
 
-        if ($request->hasFile('product_image')) {
-            Storage::disk('public')->delete($product->product_image);
-            $data['product_image'] = $request->file('product_image')->store('products', 'public');
-        }
+    // Simply update the record with the text URL/Path
+    $product->update($data);
 
-        $product->update($data);
-        return redirect()->route('admin.products.index')->with('success', 'Product updated.');
-    }
+    return redirect()->route('admin.products.index')->with('success', 'Product updated!');
+}
 
     public function destroy(Product $product)
     {

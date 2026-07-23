@@ -30,7 +30,7 @@ class CategoryController extends Controller
     {
         $data = $request->validate([
             'category_name'  => 'required|string|max:255',
-            'category_image' => 'nullable|image|max:2048',
+            'category_image' => 'nullable|string',
         ]);
 
         if ($request->hasFile('category_image')) {
@@ -47,23 +47,21 @@ class CategoryController extends Controller
     }
 
     public function update(Request $request, Category $category)
-    {
-        $data = $request->validate([
-            'category_name'  => 'required|string|max:255',
-            'category_image' => 'nullable|image|max:2048',
-        ]);
+{
+    // 1. Change validation from 'image' to 'string'
+    $request->validate([
+        'category_name' => 'required|string|max:255',
+        'category_image' => 'nullable|string', 
+    ]);
 
-        if ($request->hasFile('category_image')) {
-            if ($category->category_image) {
-                Storage::disk('public')->delete($category->category_image);
-            }
-            $data['category_image'] = $request->file('category_image')->store('categories', 'public');
-        }
+    // 2. Update the category using all the data from the form
+    $category->update([
+        'category_name' => $request->category_name,
+        'category_image' => $request->category_image, // This saves the URL text
+    ]);
 
-        $category->update($data);
-        return redirect()->route('admin.categories.index')->with('success', 'Category updated.');
-    }
-
+    return redirect()->route('admin.categories.index')->with('success', 'Category updated successfully!');
+}
     public function destroy(Category $category)
     {
         if ($category->category_image) {

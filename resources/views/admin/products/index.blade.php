@@ -81,8 +81,34 @@
                     style="cursor: pointer;">
                     
                     <td>
-                        <img src="{{ asset('storage/'.$product->product_image) }}" style="width:48px;height:48px;object-fit:cover;border-radius:8px;border:1px solid var(--border);">
-                    </td>
+    <div style="width: 50px; height: 50px; background: #f1f5f9; border-radius: 8px; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid var(--line);">
+        @if(!empty($product->product_image))
+            @php
+                $img = trim($product->product_image);
+                $isUrl = Str::startsWith($img, ['http', 'https']);
+                // If it doesn't start with 'products/' and isn't a URL, add it.
+                if (!$isUrl && !Str::startsWith($img, 'products/')) {
+                    $img = 'products/' . $img;
+                }
+                $finalSrc = $isUrl ? $img : asset($img);
+            @endphp
+            
+            <img src="{{ $finalSrc }}" 
+                 alt="Product" 
+                 style="width: 100%; height: 100%; object-fit: cover;"
+                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            
+            {{-- Hidden fallback icon if image fails to load --}}
+            <div style="display:none; color: #cbd5e1;">
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            </div>
+        @else
+            <span style="color: #cbd5e1;">
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            </span>
+        @endif
+    </div>
+</td>
                     <td>
                         <p style="font-weight:600;font-size:0.875rem;">{{ $product->product_name }}</p>
                         <p style="color:var(--muted);font-size:0.75rem;">{{ $product->brand }}</p>

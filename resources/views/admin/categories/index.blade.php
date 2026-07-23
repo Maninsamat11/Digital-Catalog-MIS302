@@ -40,12 +40,21 @@
             @forelse($categories as $cat)
             <tr>
                 <td>
-                    @if($cat->category_image)
-                        <img src="{{ asset('storage/'.$cat->category_image) }}" style="width:44px;height:44px;object-fit:cover;border-radius:8px;border:1px solid var(--border);">
-                    @else
-                        <div style="width:44px;height:44px;background:var(--surface);border-radius:8px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--muted);">—</div>
-                    @endif
-                </td>
+    <div style="width: 40px; height: 40px; background: #fff; border-radius: 8px; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 1px solid var(--line);">
+        @if($cat->category_image)
+            @php
+                // Check if it's a web link or a local file
+                $isUrl = Str::startsWith($cat->category_image, ['http://', 'https://']);
+                $imagePath = $isUrl ? $cat->category_image : asset($cat->category_image);
+            @endphp
+            <img src="{{ $imagePath }}" 
+                 alt="{{ $cat->category_name }}" 
+                 style="max-width: 100%; max-height: 100%; object-fit: contain;">
+        @else
+            <span style="color: var(--muted);">—</span>
+        @endif
+    </div>
+</td>
                 <td style="font-weight:600;">{{ $cat->category_name }}</td>
                 <td><span class="chip chip-green">{{ $cat->products_count }}</span></td>
                 <td style="color:var(--muted);">{{ $cat->created_at->format('M d, Y') }}</td>

@@ -40,10 +40,12 @@
             font-weight: 600;
         }
 
+        
         /* ── SIDEBAR ── */
         .sidebar {
             width: var(--sidebar-w); flex-shrink: 0;
-            background: #091315; /* Sleek Matte Dark Obsidian Teal */
+            background: var(--teal);
+
             display: flex; flex-direction: column;
             position: fixed; height: 100vh; top: 0; left: 0;
             z-index: 50;
@@ -114,6 +116,86 @@
             margin-left: var(--sidebar-w); flex: 1;
             display: flex; flex-direction: column; min-height: 100vh;
         }
+ @media (max-width: 1024px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr) !important; /* 2 columns for tablets */
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .stats-grid {
+        grid-template-columns: 1fr !important; /* 1 column for phones (Stacking) */
+    }
+    
+    /* 2. Fix the two-column sections below (Restock Alerts / Quick Actions) */
+    .grid-2 {
+        grid-template-columns: 1fr !important; /* Stack them 1 by 1 */
+        gap: 1.25rem;
+    }
+
+    /* 3. Fix internal padding so buttons don't hit the edges */
+    .card-body {
+        padding: 1.25rem !important;
+    }
+
+    /* 4. Fix the "Bulk CSV Import" row so the button doesn't overflow */
+    .quick-action-row {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 0.75rem;
+    }
+    
+    .quick-action-row .btn {
+        width: 100%; /* Make buttons full width on phone */
+        justify-content: center;
+    }
+}/* 📱 MOBILE VIEWPORT FIXES */
+
+@media (max-width: 992px) {
+    /* 1. Remove the fixed margin so content fills the screen width */
+    .main-wrap {
+        margin-left: 0;
+    }
+
+    /* 2. Fix Top Stats: Change from 4 columns to 2 columns for tablets */
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* 3. Hide sidebar by default on mobile (requires the hamburger menu button) */
+    .sidebar {
+        transform: translateX(-100%);
+    }
+}
+
+@media (max-width: 600px) {
+    /* 4. Fix Top Stats: Change from 2 columns to 1 column for phones */
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* 5. Fix Dashboard Sections: Change .grid-2 from 2 columns to 1 column */
+    .grid-2 {
+        grid-template-columns: 1fr;
+    }
+
+    /* 6. Adjust Topbar padding for smaller screens */
+    .topbar {
+        padding: 0 1rem;
+    }
+
+    /* 7. Shrink the font size of large numbers so they don't overflow cards */
+    .stat-card .value {
+        font-size: 1.5rem;
+    }
+
+    /* 8. Fix padding inside the page content */
+    .page-content {
+        padding: 1.5rem 1rem;
+    }
+}
+       
         .topbar {
             height: 64px; border-bottom: 1px solid var(--line);
             padding: 0 2rem;
@@ -157,7 +239,15 @@
             display: flex; align-items: center; justify-content: space-between;
         }
         .card-header a {
-            margin-left: auto; /* FIX: Fixed broken layout block margins */
+            margin-left: 665px; /* FIX: Fixed broken layout block margins */
+            height: 35px; line-height: 32px; padding: 0 0.75rem;
+
+        }
+        .card-header input {
+            margin-right: 1rem;
+            padding: 0.5rem 0.75rem; border-radius: 6px; border: 1px solid var(--line);
+            font-size: 0.82rem; outline: none; width: 100%;
+
         }
         .card-header h3 { font-size: 0.88rem; font-weight: 600; color: var(--ink); }
 

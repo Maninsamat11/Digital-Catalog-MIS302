@@ -11,18 +11,18 @@ class ProductsImport implements ToModel, WithHeadingRow
 {
     public function model(array $row)
     {
-        // Find the category by name (e.g., "Keyboards") or default to 1
+        // 1. Find the category by name (e.g., if Excel says 'Speakers', find ID 14)
         $category = Category::where('category_name', $row['category'])->first();
 
         return new Product([
-            'category_id'    => $category ? $category->id : 1, 
             'product_name'   => $row['name'],
             'brand'          => $row['brand'],
-            'description'    => $row['description'],
+            'category_id'    => $category ? $category->id : 1, // Default to ID 1 if not found
             'price'          => $row['price'],
             'stock_quantity' => $row['stock'],
-            'status'         => 'available',
-            'product_image'  => 'products/placeholder.jpg', // You can update images manually later
+            'description'    => $row['description'],
+            'product_image'  => $row['image'], // Should be 'products/0ClR82.jpg' or a URL
+            'status'         => $row['stock'] > 0 ? 'available' : 'out_of_stock',
         ]);
     }
 }
