@@ -73,27 +73,79 @@
     box-shadow: 0 4px 24px rgba(0,0,0,0.01);
 }
 
-.qr-code-holder {
-    background: #ffffff;
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    padding: 8px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.02);
-}
 
-/* Action button configurations */
+/* ── PREMIUM BUTTON DESIGN ── */
 .action-grid {
     display: flex;
-    gap: 12px;
-    margin-bottom: 2rem;
+    gap: 1rem;
+    margin: 2.5rem 0;
+    
 }
 
-.action-grid .btn-apple {
-    flex: 1;
+.btn-premium {
+    display: inline-flex;
+    align-items: center;
     justify-content: center;
+    gap: 10px;
+    padding: 1rem 2rem;
+    border-radius: 18px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    border: none;
+    text-decoration: none;
+    flex: 1;
+}
+
+/* Primary Action: Add to Compare */
+.btn-compare {
+    background: var(--text-main); /* Dark Navy/Black */
+    color: #0a0000;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.btn-compare:hover {
+    background: #000;
+    color: #ffffff;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(99, 102, 241, 0.2); /* Indigo glow */
+}
+
+.btn-compare svg {
+    transition: transform 0.3s ease;
+}
+
+.btn-compare:hover svg {
+    transform: rotate(90deg);
+}
+
+/* Secondary Action: Browse Similar */
+.btn-similar {
+    background: #ffffff;
+    color: var(--text-main);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+}
+
+.btn-similar:hover {
+    background: var(--ghost); /* Soft light grey */
+    border-color: var(--accent-teal);
+    color: var(--accent-teal);
+    transform: translateY(-3px);
+}
+
+/* Visual Badge for 'Similar' */
+.btn-similar::after {
+    content: 'NEW';
+    font-size: 0.5rem;
+    background: var(--accent-mint);
+    color: var(--text-main);
+    padding: 2px 6px;
+    border-radius: 5px;
+    margin-left: 5px;
 }
 
 /* ── PRODUCT DETAIL LAYOUT (image + info) ── */
@@ -158,7 +210,7 @@
 
     {{-- Product Image Cover --}}
     <div>
-        <div class="product-card" style="background:#ffffff; border-radius:24px; padding:2rem; overflow:hidden; aspect-ratio:1; box-shadow: 0 10px 40px rgba(0,0,0,0.03); display:flex; align-items:center; justify-content:center;">
+        <div class="product-card" style="background:#ffffff; drop-shadow: 0 4px 20px rgba(0,0,0,0.02); border-radius:24px; padding:2rem; overflow:hidden; aspect-ratio:1; box-shadow: 0 10px 40px rgba(0,0,0,0.03); display:flex; align-items:center; justify-content:center;">
             @php
                 $img = $product->product_image;
                 $isUrl = Str::startsWith($img, ['http://', 'https://']);
@@ -221,16 +273,24 @@
             </table>
         </div>
 
-        {{-- Configuration Actions --}}
-        <div class="action-grid">
-            <button class="btn btn-apple primary" onclick="toggleCompare('{{ $product->id }}')">
-                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="margin-right:8px;"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
-                ADD TO COMPARE
-            </button>
-            <a href="{{ route('search', ['category' => $product->category_id]) }}" class="btn btn-apple secondary">
-                BROWSE SIMILAR
-            </a>
-        </div>
+{{-- Configuration Actions --}}
+<div class="action-grid">
+    {{-- Add to Compare --}}
+    <button class="btn-premium btn-compare" onclick="toggleCompare('{{ $product->id }}')">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path d="M12 4v16m8-8H4"/> {{-- Simple Plus Icon --}}
+        </svg>
+        Add to Compare
+    </button>
+
+    {{-- Browse Similar --}}
+    <a href="{{ route('search', ['category' => $product->category_id]) }}" class="btn-premium btn-similar">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+            <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/> {{-- Search Icon --}}
+        </svg>
+        Explore Similar
+    </a>
+</div>
         
 
     </div>
