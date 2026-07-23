@@ -282,7 +282,32 @@
 }
 .section-label a:hover { gap: 0.55rem; }
 .section-divider { width: 24px; height: 3px; border-radius: 2px; background: var(--red); margin-bottom: 1.25rem; }
+.cat-icon {
+    /* Increased size from 52px to 80px to fill the box better */
+    width: 80px; 
+    height: 80px;
+    border-radius: 16px;
+    background: rgba(0,75,78,0.06); 
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
 
+.cat-icon img {
+    /* Makes the image fill almost the entire 80px area */
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* 'contain' ensures you see the whole icon clearly */
+    padding: 5px; /* Adds a tiny bit of space so it doesn't touch the edges */
+}
+
+/* Optional: Make the image pop even more when hovering the card */
+.cat-card:hover .cat-icon img {
+    transform: scale(1.1);
+}
 .cat-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
@@ -309,14 +334,7 @@
     transform: translateY(-5px) scale(1.01);
 }
 .cat-card:hover::before { transform: scaleX(1); }
-.cat-icon {
-    width: 52px; height: 52px; border-radius: 14px;
-    background: rgba(0,75,78,0.08); margin-bottom: 0.85rem;
-    display: flex; align-items: center; justify-content: center;
-    overflow: hidden; transition: background 0.25s;
-}
-.cat-card:hover .cat-icon { background: rgba(206,53,48,0.08); }
-.cat-icon img { width: 100%; height: 100%; object-fit: cover; border-radius: 14px; }
+
 .cat-name { font-weight: 700; font-size: 0.875rem; color: var(--ink); line-height: 1.3; letter-spacing: -0.15px; }
 .cat-count { font-size: 0.7rem; color: #8e8e93; margin-top: 0.2rem; }
 
@@ -418,14 +436,19 @@
                     @foreach($featuredProducts->take(8) as $product)
                     <div class="hc-slide">
                         <div class="hc-img">
-                            @if($product->product_image && $product->product_image !== 'products/placeholder.jpg')
-                                <img src="{{ asset('storage/' . $product->product_image) }}"
-                                     alt="{{ $product->product_name }}" loading="lazy">
+                            @if($product->product_image)
+                                @php
+                                    $img = $product->product_image;
+                                    // Check if it's a web link or a local file
+                                    $isUrl = Str::startsWith($img, ['http://', 'https://']);
+                                    // If it's local, we use asset() directly (without 'storage/')
+                                    $finalPath = $isUrl ? $img : asset($img);
+                                @endphp
+                                <img src="{{ $finalPath }}" alt="{{ $product->product_name }}" loading="lazy" 
+                                    onerror="this.src='{{ asset('products/placeholder.jpg') }}'">
                             @else
-                                <svg width="28" height="28" fill="none" stroke="currentColor"
-                                     stroke-width="1.2" viewBox="0 0 24 24">
-                                    <rect x="2" y="3" width="20" height="14" rx="2"/>
-                                    <path d="M8 21h8M12 17v4"/>
+                                <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24">
+                                    <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>
                                 </svg>
                             @endif
                         </div>
@@ -484,23 +507,28 @@
         <a href="{{ route('search') }}">See all categories →</a>
     </div>
     <div class="cat-grid">
-        @foreach($categories as $cat)
-        <a href="{{ route('category.show', $cat) }}" class="cat-card">
-            <div class="cat-icon">
-                @if($cat->category_image)
-                    <img src="{{ asset('storage/'.$cat->category_image) }}" alt="{{ $cat->category_name }}">
-                @else
-                    <svg width="24" height="24" fill="none" stroke="var(--teal)" stroke-width="1.5" viewBox="0 0 24 24">
-                        <rect x="2" y="3" width="20" height="14" rx="2"/>
-                        <path d="M8 21h8M12 17v4"/>
-                    </svg>
-                @endif
-            </div>
-            <p class="cat-name">{{ $cat->category_name }}</p>
-            <p class="cat-count">{{ $cat->products_count }} products</p>
-        </a>
-        @endforeach
-    </div>
+    @foreach($categories as $cat)
+    <a href="{{ route('category.show', $cat) }}" class="cat-card">
+        <div class="cat-icon">
+            @if($cat->category_image)
+                @php
+                    $cImg = $cat->category_image;
+                    $isCUrl = Str::startsWith($cImg, ['http://', 'https://']);
+                    $finalCPath = $isCUrl ? $cImg : asset($cImg);
+                @endphp
+                <img src="{{ $finalCPath }}" alt="{{ $cat->category_name }}" 
+                     onerror="this.src='{{ asset('products/placeholder.jpg') }}'">
+            @else
+                <svg width="32" height="32" fill="none" stroke="var(--teal)" stroke-width="1.5" viewBox="0 0 24 24">
+                    <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>
+                </svg>
+            @endif
+        </div>
+        <p class="cat-name">{{ $cat->category_name }}</p>
+        <p class="cat-count">{{ $cat->products_count }} products</p>
+    </a>
+    @endforeach
+</div>
 </section>
 
 {{-- ══ PROMO BANNER ══ --}}

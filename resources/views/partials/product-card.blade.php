@@ -1,25 +1,28 @@
 {{--
     partials/product-card.blade.php
-    Usage: @include('partials.product-card', ['product' => $product])
-
-    IMPORTANT for compare to work:
-    - data-id must be the raw integer {{ $product->id }}
-    - onclick must call toggleCompare with that same id as a string '{{ $product->id }}'
-    - Both are coerced to String inside toggleCompare() so they always match
+    Updated for Vercel/Public Folder support
 --}}
 
 <div class="card product-card">
 
     {{-- ── IMAGE ── --}}
     <div class="img-wrap">
-        @if($product->product_image && $product->product_image !== 'products/placeholder.jpg')
+        @if($product->product_image)
+            @php
+                $img = $product->product_image;
+                // Check if it's a web link or a local file in public/
+                $isUrl = Str::startsWith($img, ['http://', 'https://']);
+                // Use asset() without 'storage/' if it's a local path
+                $finalPath = $isUrl ? $img : asset($img);
+            @endphp
             <img
-                src="{{ asset('storage/' . $product->product_image) }}"
+                src="{{ $finalPath }}"
                 alt="{{ $product->product_name }}"
                 loading="lazy"
+                onerror="this.src='{{ asset('products/placeholder.jpg') }}'"
             >
         @else
-            {{-- Placeholder when no image uploaded --}}
+            {{-- Placeholder when no image data exists --}}
             <div style="
                 width:100%; height:100%;
                 display:flex; align-items:center; justify-content:center;
@@ -41,10 +44,7 @@
             <span class="badge-oos badge-new">New</span>
         @endif
 
-        {{-- ── COMPARE BUTTON ──
-             KEY: data-id="{{ $product->id }}" must match what toggleCompare() stores.
-             Both the attribute and the JS call use the same raw integer, coerced to string.
-        --}}
+        {{-- ── COMPARE BUTTON ── --}}
         <button
             class="compare-check"
             data-id="{{ $product->id }}"
@@ -73,14 +73,13 @@
         </div>
     </div>
 
-    {{-- Full-card clickable link (sits above card, below compare button via z-index) --}}
+    {{-- Full-card clickable link --}}
     <a
         href="{{ route('product.show', $product) }}"
         style="position:absolute; inset:0; z-index:1;"
         aria-label="View {{ $product->product_name }}"
     ></a>
 
-    {{-- Compare button needs to sit above the card link --}}
     <style>
         .compare-check { position: absolute; z-index: 2; }
         .badge-oos, .badge-new { position: absolute; z-index: 2; }
