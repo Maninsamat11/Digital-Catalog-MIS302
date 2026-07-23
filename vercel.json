@@ -16,6 +16,7 @@
     "APP_PACKAGES_CACHE": "/tmp/packages.php",
     "APP_SERVICES_CACHE": "/tmp/services.php",
     "SESSION_DRIVER": "cookie",
-    "CACHE_DRIVER": "array"
+    "CACHE_DRIVER": "array",
+    "ASSET_URL": "https://mood-set-up-studio.vercel.app/"
   }
 }

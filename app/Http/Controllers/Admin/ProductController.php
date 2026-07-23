@@ -42,23 +42,22 @@ class ProductController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $data = $request->validate([
-            'category_id'    => 'required|exists:categories,id',
-            'product_name'   => 'required|string|max:255',
-            'brand'          => 'required|string|max:255',
-            'description'    => 'required|string',
-            'price'          => 'required|numeric|min:0',
-            'stock_quantity' => 'required|integer|min:0',
-            'product_image'  => 'required|image|max:4096',
-            'status'         => 'required|in:available,out_of_stock',
-        ]);
+{
+    $data = $request->validate([
+        'product_name'   => 'required|string|max:255',
+        'category_id'    => 'required|exists:categories,id',
+        'brand'          => 'required|string',
+        'price'          => 'required|numeric',
+        'stock_quantity' => 'required|integer',
+        'product_image'  => 'required|string', // Changed to string
+        'description'    => 'required|string',
+        'status'         => 'required|in:available,out_of_stock',
+    ]);
 
-        $data['product_image'] = $request->file('product_image')->store('products', 'public');
+    Product::create($data);
 
-        Product::create($data);
-        return redirect()->route('admin.products.index')->with('success', 'Product created.');
-    }
+    return redirect()->route('admin.products.index')->with('success', 'Product created successfully!');
+}
 
     public function edit(Product $product)
     {

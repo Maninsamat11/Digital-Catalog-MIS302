@@ -27,40 +27,30 @@ class CategoryController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $data = $request->validate([
-            'category_name'  => 'required|string|max:255',
-            'category_image' => 'nullable|string',
-        ]);
+{
+    $data = $request->validate([
+        'category_name' => 'required|string|unique:categories,category_name',
+        'category_image' => 'nullable|string', 
+    ]);
 
-        if ($request->hasFile('category_image')) {
-            $data['category_image'] = $request->file('category_image')->store('categories', 'public');
-        }
-
-        Category::create($data);
-        return redirect()->route('admin.categories.index')->with('success', 'Category created.');
-    }
+    Category::create($data);
+    return redirect()->route('admin.categories.index')->with('success', 'Category created!');
+}
 
     public function edit(Category $category)
     {
         return view('admin.categories.edit', compact('category'));
     }
 
-    public function update(Request $request, Category $category)
+public function update(Request $request, Category $category)
 {
-    // 1. Change validation from 'image' to 'string'
-    $request->validate([
-        'category_name' => 'required|string|max:255',
-        'category_image' => 'nullable|string', 
+    $data = $request->validate([
+        'category_name' => 'required|string|unique:categories,category_name,' . $category->id,
+        'category_image' => 'nullable|string',
     ]);
 
-    // 2. Update the category using all the data from the form
-    $category->update([
-        'category_name' => $request->category_name,
-        'category_image' => $request->category_image, // This saves the URL text
-    ]);
-
-    return redirect()->route('admin.categories.index')->with('success', 'Category updated successfully!');
+    $category->update($data);
+    return redirect()->route('admin.categories.index')->with('success', 'Category updated!');
 }
     public function destroy(Category $category)
     {

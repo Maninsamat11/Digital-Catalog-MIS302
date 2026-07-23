@@ -11,6 +11,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+    // Add this line to trust all proxies (required for Vercel/Cloudflare)
+    $middleware->trustProxies(at: '*'); 
+    
     $middleware->alias([
         'admin' => \App\Http\Middleware\AdminMiddleware::class,
     ]);

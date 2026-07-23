@@ -19,11 +19,11 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      */
-    public function boot()
+public function boot(): void
 {
-    Schema::defaultStringLength(191);
-    if (config('app.env') === 'production') {
-        app()->useStoragePath('/tmp/storage');
+    // Check if we are on Vercel (Production)
+    if (config('app.env') === 'production' || env('URL_FORCE_HTTPS') === 'true') {
+        \Illuminate\Support\Facades\URL::forceScheme('https');
     }
 }
 }
