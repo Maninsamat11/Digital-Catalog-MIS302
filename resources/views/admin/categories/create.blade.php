@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', (isset($category) ? 'Edit' : 'New') . ' Category — TechVault')
+@section('title', (isset($category) ? 'Edit' : 'New') . ' Category — Mood Set-Up Studio')
 @section('topbar-title', isset($category) ? 'Edit Category' : 'New Category')
 
 @section('content')

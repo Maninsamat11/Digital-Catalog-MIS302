@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Compare Products — TechVault')
+@section('title', 'Compare Products — Mood Set-Up Studio')
 
 @push('styles')
 <style>

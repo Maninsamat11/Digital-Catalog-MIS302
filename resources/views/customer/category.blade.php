@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', $category->category_name . ' — TechVault')
+@section('title', $category->category_name . ' — Mood Set-Up Studio')
 
 @section('content')
 

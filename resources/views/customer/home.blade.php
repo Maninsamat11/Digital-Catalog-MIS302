@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Mood Set-up Studio — Digital Catalog')
+@section('title', 'Home — Mood Set-Up Studio')
 
 @push('styles')
 <style>
@@ -403,7 +403,7 @@
             Set The Mood.<br>
             <span>Build Your Setup.</span>
         </h1>
-        <p class="hero-sub">Browse our full product range, compare specs, and find exactly what fits your space — all at your own pace.</p>
+        <p class="hero-sub">Browse our full product range, compare specs, and find exactly what fits your space all at your own pace.</p>
         <div class="hero-actions">
             <a href="{{ route('search') }}" class="btn btn-primary">Browse All Products</a>
             <a href="{{ route('matcher') }}" class="btn btn-outline"
@@ -412,6 +412,7 @@
             </a>
         </div>
     </div>
+
 
     <div class="hero-right">
         <div class="hero-search-panel">
@@ -444,8 +445,12 @@
                                     // If it's local, we use asset() directly (without 'storage/')
                                     $finalPath = $isUrl ? $img : asset($img);
                                 @endphp
-                                <img src="{{ $finalPath }}" alt="{{ $product->product_name }}" loading="lazy" 
-                                    onerror="this.src='{{ asset('products/placeholder.jpg') }}'">
+                                <img 
+                                    src="{{ $finalPath }}" 
+                                    alt="{{ $product->product_name }}" 
+                                    loading="lazy"
+                                    onerror="this.onerror=null; this.src='{{ asset('products/placeholder.jpg') }}';"
+                                >
                             @else
                                 <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24">
                                     <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>

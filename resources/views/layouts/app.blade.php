@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Mood Set-up Studio — Digital Catalog')</title>
+    <title>@yield('title', 'Mood Set-Up Studio')</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Space+Grotesque:wght@300;500;700&family=DM+Sans:opsz,wght@0,9..40,400;0,9..40,500&display=swap" rel="stylesheet">
     <style>
@@ -35,6 +35,7 @@ body {
     color: var(--ink);
     min-height: 100vh;
     line-height: 1.6;
+    overflow-x: hidden;
 }
 h1, h2, h3, h4, h5 {
     font-family: 'Space Grotesque', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -178,6 +179,7 @@ main { padding: 0 0 5rem; }
 }
 .badge-oos {
     position: absolute; top: 0.75rem; left: 0.75rem;
+    z-index: 2; /* sits above the full-card overlay link so it stays visible */
     background: rgba(28,28,30,0.75);
     backdrop-filter: blur(8px);
     color: var(--white);
@@ -193,6 +195,7 @@ main { padding: 0 0 5rem; }
 /* ── COMPARE ── */
 .compare-check {
     position: absolute; top: 0.75rem; right: 0.75rem;
+    z-index: 2; /* sits above the full-card overlay link so it stays clickable */
     background: rgba(255,255,255,0.75);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
@@ -217,8 +220,9 @@ main { padding: 0 0 5rem; }
     box-shadow: 0 16px 48px rgba(0,75,78,0.35);
     z-index: 300; animation: slideUp 0.3s var(--spring);
     border: 0.5px solid rgba(255,255,255,0.15);
+    max-width: calc(100vw - 2rem);
 }
-.compare-bar span { color: rgba(255,255,255,0.7); font-size: 0.85rem; }
+.compare-bar span { color: rgba(255,255,255,0.7); font-size: 0.85rem; white-space: nowrap; }
 .compare-bar a {
     background: rgba(255,255,255,0.15);
     backdrop-filter: blur(8px);
@@ -226,6 +230,7 @@ main { padding: 0 0 5rem; }
     color: var(--white);
     padding: 0.38rem 1rem; border-radius: 20px;
     font-size: 0.78rem; font-weight: 700; text-decoration: none;
+    white-space: nowrap;
     transition: background 0.2s;
 }
 .compare-bar a:hover { background: rgba(255,255,255,0.25); }
@@ -339,20 +344,27 @@ footer {
 footer strong { color: var(--teal); font-weight: 600; }
 
 @media (max-width: 768px) {
-    .nav-search { display: none; }
-    .product-grid { grid-template-columns: repeat(auto-fill, minmax(155px, 1fr)); gap: 0.875rem; }
-    
-    /* FIX: Stacks the logo and links vertically on mobile to prevent squishing and overflow */
-    .nav-inner { 
+    /* FIX: Stacks the logo, search, and links vertically on mobile to prevent squishing and overflow */
+    .nav-inner {
         flex-direction: column;
         height: auto;
-        padding: 0.75rem 1.25rem; 
-        gap: 0.75rem; 
-        align-items: flex-start;
+        padding: 0.75rem 1.25rem;
+        gap: 0.65rem;
+        align-items: stretch;
     }
-    
+
+    /* FIX: Search is no longer hidden — it becomes a full-width row instead of
+       disappearing, so mobile visitors can still search the catalog */
+    .nav-search {
+        max-width: none;
+        width: 100%;
+        flex: none;
+    }
+
+    .product-grid { grid-template-columns: repeat(auto-fill, minmax(155px, 1fr)); gap: 0.875rem; }
+
     /* FIX: Enables clean, smooth horizontal swiping for the navigation links on mobile */
-    .nav-links { 
+    .nav-links {
         margin-left: 0;
         width: 100%;
         overflow-x: auto;
@@ -372,6 +384,22 @@ footer strong { color: var(--teal); font-weight: 600; }
 
     .container { padding: 0 1.25rem; }
     .ticker-wrap { margin: 0 1.25rem; }
+
+    .page-header h1 { font-size: 1.5rem; }
+
+    .compare-bar {
+        gap: 0.75rem;
+        padding: 0.6rem 1rem;
+        bottom: 1.25rem;
+    }
+    .compare-bar span { font-size: 0.78rem; }
+}
+
+@media (max-width: 420px) {
+    .nav-logo { font-size: 0.95rem; }
+    .product-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.65rem; }
+    .compare-bar { gap: 0.5rem; padding: 0.55rem 0.85rem; }
+    .compare-bar a { padding: 0.35rem 0.75rem; font-size: 0.72rem; }
 }
     </style>
     @stack('styles')
@@ -394,7 +422,7 @@ footer strong { color: var(--teal); font-weight: 600; }
             <a href="{{ route('faq') }}" class="{{ request()->routeIs('faq') ? 'active' : '' }}">FAQ</a>
 
             @auth
-                @if(auth()->user()->is_admin) 
+                @if(auth()->user()->is_admin)
                     <a href="{{ route('admin.dashboard') }}" class="btn-pill">Admin Panel</a>
                 @endif
 
@@ -420,6 +448,7 @@ footer strong { color: var(--teal); font-weight: 600; }
     </main>
 </div>
 
+
 {{-- TICKER --}}
 <div class="ticker-wrap">
     <div class="ticker-track" id="tickerTrack">
@@ -427,7 +456,6 @@ footer strong { color: var(--teal); font-weight: 600; }
         <span><em>✦</em></span>
         <span>Compare Up to <em>3 Products</em></span>
         <span><em>✦</em></span>
-        <span>Ask Staff for a Demo</span>
         <span><em>✦</em></span>
         <span>New Arrivals Weekly</span>
         <span><em>✦</em></span>
@@ -437,7 +465,6 @@ footer strong { color: var(--teal); font-weight: 600; }
         <span><em>✦</em></span>
         <span>Compare Up to <em>3 Products</em></span>
         <span><em>✦</em></span>
-        <span>Ask Staff for a Demo</span>
         <span><em>✦</em></span>
         <span>New Arrivals Weekly</span>
         <span><em>✦</em></span>

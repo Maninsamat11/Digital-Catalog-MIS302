@@ -1,11 +1,64 @@
 @extends('layouts.app')
 
-@section('title', 'About Us — TechVault')
+@section('title', 'About Us — Mood Set-Up Studio')
+
+@push('styles')
+<style>
+.about-story-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: center;
+}
+.about-stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+.about-values-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+.about-visit-row {
+    display: flex;
+    justify-content: center;
+    gap: 3rem;
+    flex-wrap: wrap;
+}
+
+/* ══════════════════════════════════════════════
+   📱 RESPONSIVE
+   ══════════════════════════════════════════════ */
+
+@media (max-width: 900px) {
+    .about-story-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .about-values-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .about-hero { padding: 2.5rem 0 2rem !important; }
+    .about-stats-grid { gap: 0.75rem; }
+    .about-values-grid { grid-template-columns: 1fr; }
+    .about-visit-row { gap: 1.5rem; }
+    .about-visit-card { padding: 1.75rem 1.25rem !important; }
+    section h2 { font-size: 1.25rem !important; }
+}
+</style>
+@endpush
 
 @section('content')
 
 {{-- HERO --}}
-<section style="padding: 4rem 0 3rem; text-align: center; position: relative;">
+<section class="about-hero" style="padding: 4rem 0 3rem; text-align: center; position: relative;">
     <div style="position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 50% 0%, rgba(108,99,255,0.12) 0%, transparent 70%);pointer-events:none;"></div>
     <p style="font-size:0.8rem;color:var(--accent2);text-transform:uppercase;letter-spacing:0.15em;margin-bottom:0.75rem;">Who We Are</p>
     <h1 style="font-size:clamp(2.2rem,5vw,3.5rem);font-weight:800;line-height:1.1;margin-bottom:1rem;">
@@ -16,14 +69,14 @@
 
 {{-- OUR STORY --}}
 <section style="margin-bottom:3.5rem;">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center;">
+    <div class="about-story-grid">
         <div>
             <p style="font-size:0.78rem;color:var(--accent2);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:0.6rem;">Our Story</p>
             <h2 style="font-size:1.7rem;font-weight:800;line-height:1.2;margin-bottom:1rem;">From a small shop to a full catalog</h2>
             <p style="color:var(--muted);line-height:1.8;margin-bottom:1rem;">TechVault started as a small in-store audio counter with a passion for quality sound and honest product recommendations. Over the years, we expanded our range to include peripherals, DACs, IEMs, and everything in between.</p>
             <p style="color:var(--muted);line-height:1.8;">This digital catalog was built so that every customer walking into our store can explore our full inventory independently — no waiting, no guesswork, just the right information at your fingertips.</p>
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+        <div class="about-stats-grid">
             <div class="card" style="padding:1.5rem;text-align:center;">
                 <p style="font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;color:var(--accent);">14+</p>
                 <p style="font-size:0.85rem;color:var(--muted);margin-top:0.3rem;">Product Categories</p>
@@ -75,7 +128,7 @@
 <section style="margin-bottom:3.5rem;">
     <p style="font-size:0.78rem;color:var(--accent2);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:0.6rem;">Our Values</p>
     <h2 style="font-size:1.4rem;font-weight:800;margin-bottom:1.5rem;">Why customers choose us</h2>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;">
+    <div class="about-values-grid">
         <div class="card" style="padding:1.5rem;border-top:3px solid var(--accent);">
             <p style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:0.5rem;">Honest Recommendations</p>
             <p style="font-size:0.85rem;color:var(--muted);line-height:1.6;">We recommend what fits your needs and budget — not just the most expensive option on the shelf.</p>
@@ -93,10 +146,10 @@
 
 {{-- VISIT US --}}
 <section style="margin-bottom:3.5rem;">
-    <div class="card" style="padding:2.5rem;text-align:center;background:linear-gradient(135deg,rgba(108,99,255,0.08),rgba(0,229,192,0.05));">
+    <div class="card about-visit-card" style="padding:2.5rem;text-align:center;background:linear-gradient(135deg,rgba(108,99,255,0.08),rgba(0,229,192,0.05));">
         <p style="font-size:0.78rem;color:var(--accent2);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:0.6rem;">Find Us</p>
         <h2 style="font-size:1.5rem;font-weight:800;margin-bottom:1rem;">Visit Our Store</h2>
-        <div style="display:flex;justify-content:center;gap:3rem;flex-wrap:wrap;">
+        <div class="about-visit-row">
             <div>
                 <p style="font-size:0.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.3rem;">Location</p>
                 <p style="font-weight:600;">Phnom Penh, Cambodia</p>

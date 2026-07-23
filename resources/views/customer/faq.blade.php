@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'FAQ — TechVault')
+@section('title', 'FAQ — Mood Set-Up Studio')
 
 @section('content')
 

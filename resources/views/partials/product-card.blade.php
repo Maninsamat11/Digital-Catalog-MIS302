@@ -15,12 +15,12 @@
                 // Use asset() without 'storage/' if it's a local path
                 $finalPath = $isUrl ? $img : asset($img);
             @endphp
-            <img
-                src="{{ $finalPath }}"
-                alt="{{ $product->product_name }}"
-                loading="lazy"
-                onerror="this.src='{{ asset('products/placeholder.jpg') }}'"
-            >
+            <img 
+    src="{{ $finalPath }}" 
+    alt="{{ $product->product_name }}" 
+    loading="lazy"
+    onerror="this.onerror=null; this.src='{{ asset('products/placeholder.jpg') }}';"
+>
         @else
             {{-- Placeholder when no image data exists --}}
             <div style="
@@ -79,10 +79,5 @@
         style="position:absolute; inset:0; z-index:1;"
         aria-label="View {{ $product->product_name }}"
     ></a>
-
-    <style>
-        .compare-check { position: absolute; z-index: 2; }
-        .badge-oos, .badge-new { position: absolute; z-index: 2; }
-    </style>
 
 </div>

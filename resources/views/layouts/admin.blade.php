@@ -27,29 +27,30 @@
             --ease:      cubic-bezier(.25,.8,.25,1);
         }
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { -webkit-text-size-adjust: 100%; }
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background: var(--ghost);
             color: var(--ink);
             display: flex;
             min-height: 100vh;
+            overflow-x: hidden;
         }
-        h1,h2,h3,h4,h5 { 
-            font-family: 'Space Grotesque', sans-serif; 
-            letter-spacing: -0.3px; 
+        h1,h2,h3,h4,h5 {
+            font-family: 'Space Grotesque', sans-serif;
+            letter-spacing: -0.3px;
             font-weight: 600;
         }
 
-        
         /* ── SIDEBAR ── */
         .sidebar {
             width: var(--sidebar-w); flex-shrink: 0;
             background: var(--teal);
-
             display: flex; flex-direction: column;
             position: fixed; height: 100vh; top: 0; left: 0;
-            z-index: 50;
+            z-index: 60;
             border-right: 1px solid rgba(255, 255, 255, 0.04);
+            transition: transform 0.25s var(--ease);
         }
         .sidebar-logo {
             padding: 1.6rem 1.5rem 1.4rem;
@@ -111,91 +112,34 @@
         }
         .sidebar-footer button:hover { color: #ff6b68; }
 
+        /* Backdrop shown behind the sidebar when it's open on mobile */
+        .sidebar-overlay {
+            display: none;
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.35);
+            z-index: 55;
+        }
+
+        /* Hamburger toggle — hidden on desktop, shown on mobile */
+        .sidebar-toggle {
+            display: none;
+            align-items: center; justify-content: center;
+            width: 36px; height: 36px;
+            border-radius: 8px; border: 1px solid var(--line);
+            background: var(--white);
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        .sidebar-toggle svg { pointer-events: none; }
+
         /* ── MAIN WRAP ── */
         .main-wrap {
             margin-left: var(--sidebar-w); flex: 1;
             display: flex; flex-direction: column; min-height: 100vh;
+            min-width: 0; /* prevent flex children from overflowing horizontally */
+            width: 100%;
         }
- @media (max-width: 1024px) {
-    .stats-grid {
-        grid-template-columns: repeat(2, 1fr) !important; /* 2 columns for tablets */
-        gap: 1rem;
-    }
-}
 
-@media (max-width: 600px) {
-    .stats-grid {
-        grid-template-columns: 1fr !important; /* 1 column for phones (Stacking) */
-    }
-    
-    /* 2. Fix the two-column sections below (Restock Alerts / Quick Actions) */
-    .grid-2 {
-        grid-template-columns: 1fr !important; /* Stack them 1 by 1 */
-        gap: 1.25rem;
-    }
-
-    /* 3. Fix internal padding so buttons don't hit the edges */
-    .card-body {
-        padding: 1.25rem !important;
-    }
-
-    /* 4. Fix the "Bulk CSV Import" row so the button doesn't overflow */
-    .quick-action-row {
-        flex-direction: column;
-        align-items: flex-start !important;
-        gap: 0.75rem;
-    }
-    
-    .quick-action-row .btn {
-        width: 100%; /* Make buttons full width on phone */
-        justify-content: center;
-    }
-}/* 📱 MOBILE VIEWPORT FIXES */
-
-@media (max-width: 992px) {
-    /* 1. Remove the fixed margin so content fills the screen width */
-    .main-wrap {
-        margin-left: 0;
-    }
-
-    /* 2. Fix Top Stats: Change from 4 columns to 2 columns for tablets */
-    .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    /* 3. Hide sidebar by default on mobile (requires the hamburger menu button) */
-    .sidebar {
-        transform: translateX(-100%);
-    }
-}
-
-@media (max-width: 600px) {
-    /* 4. Fix Top Stats: Change from 2 columns to 1 column for phones */
-    .stats-grid {
-        grid-template-columns: 1fr;
-    }
-
-    /* 5. Fix Dashboard Sections: Change .grid-2 from 2 columns to 1 column */
-    .grid-2 {
-        grid-template-columns: 1fr;
-    }
-
-    /* 6. Adjust Topbar padding for smaller screens */
-    .topbar {
-        padding: 0 1rem;
-    }
-
-    /* 7. Shrink the font size of large numbers so they don't overflow cards */
-    .stat-card .value {
-        font-size: 1.5rem;
-    }
-
-    /* 8. Fix padding inside the page content */
-    .page-content {
-        padding: 1.5rem 1rem;
-    }
-}
-       
         .topbar {
             height: 64px; border-bottom: 1px solid var(--line);
             padding: 0 2rem;
@@ -204,22 +148,25 @@
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             position: sticky; top: 0; z-index: 40;
+            gap: 1rem;
         }
-        .topbar-left { display: flex; align-items: center; gap: 0.75rem; }
+        .topbar-left { display: flex; align-items: center; gap: 0.75rem; min-width: 0; }
         .topbar-breadcrumb {
             font-size: 0.75rem; color: #8e8e93;
             display: flex; align-items: center; gap: 0.4rem;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
         .topbar-breadcrumb span { color: #8e8e93; }
         .topbar-breadcrumb strong { color: var(--ink); font-weight: 600; }
         .topbar h2 { font-size: 0.95rem; font-weight: 600; color: var(--ink); letter-spacing: -0.2px; }
-        .topbar-user { display: flex; align-items: center; gap: 0.6rem; }
+        .topbar-user { display: flex; align-items: center; gap: 0.6rem; flex-shrink: 0; }
         .topbar-avatar {
             width: 28px; height: 28px; border-radius: 50%;
             background: var(--teal);
             color: var(--white);
             display: flex; align-items: center; justify-content: center;
             font-size: 0.65rem; font-weight: 600;
+            flex-shrink: 0;
         }
         .topbar-name { font-size: 0.8rem; font-weight: 500; color: var(--ink-2); }
 
@@ -229,7 +176,7 @@
         .card {
             background: var(--white);
             border: 1px solid var(--line);
-            border-radius: 12px; 
+            border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 1px 3px rgba(0,0,0,0.02), 0 10px 30px rgba(0,0,0,0.01);
         }
@@ -237,19 +184,16 @@
         .card-header {
             padding: 1.1rem 1.5rem; border-bottom: 1px solid var(--line);
             display: flex; align-items: center; justify-content: space-between;
-        }
-        .card-header a {
-            margin-left: 665px; /* FIX: Fixed broken layout block margins */
-            height: 35px; line-height: 32px; padding: 0 0.75rem;
-
+            gap: 0.75rem; flex-wrap: wrap;
         }
         .card-header input {
-            margin-right: 1rem;
             padding: 0.5rem 0.75rem; border-radius: 6px; border: 1px solid var(--line);
             font-size: 0.82rem; outline: none; width: 100%;
-
         }
         .card-header h3 { font-size: 0.88rem; font-weight: 600; color: var(--ink); }
+
+        /* Wrapper so wide tables scroll horizontally instead of breaking layout */
+        .table-scroll { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
 
         /* ── TABLES ── */
         table { width: 100%; border-collapse: collapse; }
@@ -300,11 +244,12 @@
 
         /* ── BUTTONS ── */
         .btn {
-            display: inline-flex; align-items: center; gap: 0.4rem;
+            display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
             padding: 0.5rem 1rem; border-radius: 6px; border: 1px solid transparent;
             font-size: 0.8rem; font-weight: 600; cursor: pointer;
             text-decoration: none; transition: all 0.2s;
             font-family: inherit; letter-spacing: -0.1px;
+            white-space: nowrap;
         }
         .btn-primary {
             background: var(--red); color: var(--white); border-color: var(--red);
@@ -367,12 +312,56 @@
 
         /* ── GRID ── */
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+
+        /* ══════════════════════════════════════════════
+           📱 RESPONSIVE — tablet & mobile
+           One consolidated, non-conflicting rule set.
+           ══════════════════════════════════════════════ */
+
+        /* Tablet: collapse to an off-canvas sidebar, 2-col stats */
+        @media (max-width: 1024px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.is-open { transform: translateX(0); box-shadow: 0 0 40px rgba(0,0,0,0.25); }
+            .sidebar.is-open ~ .sidebar-overlay,
+            body.sidebar-open .sidebar-overlay { display: block; }
+
+            .main-wrap { margin-left: 0; }
+            .sidebar-toggle { display: inline-flex; }
+
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 { grid-template-columns: 1fr; gap: 1.25rem; }
+            .page-content { padding: 1.5rem 1.25rem; }
+        }
+
+        @media (max-width: 600px) {
+            .stats-grid { grid-template-columns: 1fr; gap: 0.85rem; }
+
+            .topbar { padding: 0 1rem; }
+            .topbar-name { display: none; }
+            .topbar-breadcrumb span:first-child { display: none; }
+
+            .card-body { padding: 1.15rem; }
+            .card-header { padding: 0.9rem 1.15rem; }
+            .card-header a.btn { margin-left: auto; }
+
+            .stat-card .value { font-size: 1.5rem; }
+            .stat-card { padding: 1.1rem; }
+
+            .page-content { padding: 1.25rem 1rem; }
+
+            th, td { padding: 0.65rem 0.75rem; font-size: 0.78rem; }
+        }
     </style>
     @stack('styles')
 </head>
 <body>
 
-<aside class="sidebar">
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<aside class="sidebar" id="sidebar">
     <div class="sidebar-logo">
         <a href="{{ route('admin.dashboard') }}">Mood&nbsp;Set-up&nbsp;<em>Studio</em></a>
         <p>Admin Panel</p>
@@ -416,6 +405,9 @@
 <div class="main-wrap">
     <div class="topbar">
         <div class="topbar-left">
+            <button type="button" class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle menu">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            </button>
             <div class="topbar-breadcrumb">
                 <span>Admin</span>
                 <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
@@ -438,6 +430,40 @@
         @yield('content')
     </div>
 </div>
+
+<script>
+    (function () {
+        var sidebar = document.getElementById('sidebar');
+        var toggle = document.getElementById('sidebarToggle');
+        var overlay = document.getElementById('sidebarOverlay');
+
+        function openSidebar() {
+            sidebar.classList.add('is-open');
+            overlay.style.display = 'block';
+        }
+        function closeSidebar() {
+            sidebar.classList.remove('is-open');
+            overlay.style.display = 'none';
+        }
+
+        toggle && toggle.addEventListener('click', function () {
+            sidebar.classList.contains('is-open') ? closeSidebar() : openSidebar();
+        });
+        overlay && overlay.addEventListener('click', closeSidebar);
+
+        // Close the drawer automatically after tapping a nav link on mobile
+        document.querySelectorAll('.sidebar-nav a').forEach(function (link) {
+            link.addEventListener('click', function () {
+                if (window.innerWidth <= 1024) closeSidebar();
+            });
+        });
+
+        // Keep state sane if the viewport is resized past the breakpoint
+        window.addEventListener('resize', function () {
+            if (window.innerWidth > 1024) closeSidebar();
+        });
+    })();
+</script>
 
 @stack('scripts')
 </body>

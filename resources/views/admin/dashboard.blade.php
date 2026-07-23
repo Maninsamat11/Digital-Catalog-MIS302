@@ -68,6 +68,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 0.75rem;
     padding: 0.75rem 1rem;
     border-radius: 8px;
     background: #fff;
@@ -80,12 +81,20 @@
     box-shadow: 0 4px 12px rgba(0,0,0,0.02);
 }
 .alert-strip:last-child { margin-bottom: 0; }
+.alert-strip-info {
+    display: flex;
+    align-items: center;
+    min-width: 0; /* allow text to truncate instead of pushing the button off-screen */
+}
+.alert-strip-info > div { min-width: 0; }
+.alert-strip-info p { overflow: hidden; text-overflow: ellipsis; }
 .alert-indicator {
     width: 6px;
     height: 6px;
     border-radius: 50%;
     display: inline-block;
     margin-right: 12px;
+    flex-shrink: 0;
 }
 .indicator-steel { background: var(--steel-blue); box-shadow: 0 0 8px rgba(2, 132, 199, 0.4); }
 .indicator-amber { background: var(--warn); box-shadow: 0 0 8px rgba(180, 83, 9, 0.4); }
@@ -100,6 +109,38 @@
     background: #e0f2fe;
     color: var(--steel-blue);
     font-weight: 700;
+}
+
+/* ── RESPONSIVE (mobile / tablet) ── */
+@media (max-width: 768px) {
+    .ops-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .alert-strip {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .alert-strip-info {
+        margin-bottom: 0.6rem;
+    }
+    .alert-strip > .btn {
+        align-self: stretch;
+        text-align: center;
+    }
+    .bar-chart {
+        gap: 0.4rem;
+        padding-right: 0.5rem;
+    }
+    .bar-date {
+        font-size: 0.58rem;
+    }
+    .bar-val {
+        font-size: 0.6rem;
+    }
 }
 </style>
 @endpush
@@ -132,7 +173,7 @@
 
 {{-- SMART OPERATIONS HUB --}}
 <div class="ops-grid">
-    
+
     {{-- RESTOCK ALERTS --}}
     <div class="card">
         <div class="card-header">
@@ -141,7 +182,7 @@
         <div class="card-body" style="max-height: 290px; overflow-y: auto;">
             @forelse($lowStockProducts as $lowProduct)
                 <div class="alert-strip" style="border-left: 3px solid var(--amber);">
-                    <div style="display: flex; align-items: center;">
+                    <div class="alert-strip-info">
                         <span class="alert-indicator indicator-amber"></span>
                         <div>
                             <p style="font-weight: 600; font-size: 0.82rem; margin: 0; color: var(--ink);">{{ $lowProduct->product_name }}</p>
@@ -150,7 +191,7 @@
                             </p>
                         </div>
                     </div>
-                    <a href="{{ route('admin.products.edit', $lowProduct) }}" class="btn btn-outline btn-sm" style="font-size:0.7rem;">Restock</a>
+                    <a href="{{ route('admin.products.edit', $lowProduct) }}" class="btn btn-outline btn-sm">Restock</a>
                 </div>
             @empty
                 <p style="color:var(--muted); text-align:center; padding: 2.5rem 0; font-size:0.8rem; font-weight:500;">All nodes operating at optimal capacity.</p>
@@ -164,38 +205,38 @@
             <h3>Quick Actions & Utilities</h3>
         </div>
         <div class="card-body" style="max-height: 290px; overflow-y: auto; display: flex; flex-direction: column; gap: 0.6rem;">
-            
+
             <div class="alert-strip" style="border-left: 3px solid var(--teal); margin-bottom: 0;">
-                <div style="display: flex; align-items: center;">
+                <div class="alert-strip-info">
                     <span class="alert-indicator" style="background: var(--teal); box-shadow: 0 0 8px rgba(0, 75, 78, 0.4);"></span>
                     <div>
                         <p style="font-weight: 600; font-size: 0.82rem; margin: 0; color: var(--ink);">Add New Product</p>
                         <p style="font-size: 0.72rem; color: var(--muted); margin: 0; margin-top: 2px;">Insert a single item into the active digital catalog.</p>
                     </div>
                 </div>
-                <a href="{{ route('admin.products.create') }}" class="btn btn-teal btn-sm" style="font-size:0.7rem;">+ Add</a>
+                <a href="{{ route('admin.products.create') }}" class="btn btn-teal btn-sm">+ Add</a>
             </div>
 
             <div class="alert-strip" style="border-left: 3px solid var(--steel-blue); margin-bottom: 0;">
-                <div style="display: flex; align-items: center;">
+                <div class="alert-strip-info">
                     <span class="alert-indicator indicator-steel"></span>
                     <div>
                         <p style="font-weight: 600; font-size: 0.82rem; margin: 0; color: var(--ink);">Bulk CSV Import</p>
                         <p style="font-size: 0.72rem; color: var(--muted); margin: 0; margin-top: 2px;">Upload catalog spreadsheets to update items in bulk.</p>
                     </div>
                 </div>
-                <a href="{{ route('admin.products.index') }}" class="btn btn-outline btn-sm" style="font-size:0.7rem;">Import</a>
+                <a href="{{ route('admin.products.index') }}" class="btn btn-outline btn-sm">Import</a>
             </div>
 
             <div class="alert-strip" style="border-left: 3px solid var(--warn); margin-bottom: 0;">
-                <div style="display: flex; align-items: center;">
+                <div class="alert-strip-info">
                     <span class="alert-indicator indicator-amber"></span>
                     <div>
                         <p style="font-weight: 600; font-size: 0.82rem; margin: 0; color: var(--ink);">Manage Categories</p>
                         <p style="font-size: 0.72rem; color: var(--muted); margin: 0; margin-top: 2px;">Organize product classifications and active categories.</p>
                     </div>
                 </div>
-                <a href="{{ route('admin.categories.index') }}" class="btn btn-outline btn-sm" style="font-size:0.7rem;">Manage</a>
+                <a href="{{ route('admin.categories.index') }}" class="btn btn-outline btn-sm">Manage</a>
             </div>
 
         </div>
@@ -212,6 +253,7 @@
             <h3>Product Activity Leaderboard</h3>
             <a href="{{ route('admin.interactions') }}" class="btn btn-outline btn-sm">Full Report →</a>
         </div>
+        <div class="table-scroll">
         <table>
             <thead>
                 <tr>
@@ -250,6 +292,7 @@
                 @endforelse
             </tbody>
         </table>
+        </div>
     </div>
 
     {{-- INTERACTIONS BY TYPE --}}
@@ -288,7 +331,7 @@
             @endforelse
 
             @if($interactionsByType->isNotEmpty())
-            <div style="margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid var(--line);display:flex;gap:1.5rem;">
+            <div style="margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid var(--line);display:flex;gap:1.5rem;flex-wrap:wrap;">
                 @foreach($typeColors as $label => $color)
                 <div style="display:flex;align-items:center;gap:0.4rem;">
                     <div style="width:6px;height:6px;border-radius:50%;background:{{ $color }};"></div>
@@ -327,7 +370,7 @@
                     </div>
                 @endforeach
             </div>
-            <div style="margin-top:1rem;display:flex;gap:1.5rem;align-items:center;">
+            <div style="margin-top:1rem;display:flex;gap:1.5rem;align-items:center;flex-wrap:wrap;">
                 <div style="display:flex;align-items:center;gap:0.4rem;">
                     <div style="width:10px;height:10px;border-radius:3px;background:var(--teal);"></div>
                     <span style="font-size:0.7rem;color:var(--muted); font-weight: 600;">Previous days</span>

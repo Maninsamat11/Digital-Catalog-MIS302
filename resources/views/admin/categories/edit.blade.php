@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Edit Category — TechVault')
+@section('title', 'Edit Category — Mood Set-Up Studio')
 @section('topbar-title', 'Edit Category')
 
 @section('content')

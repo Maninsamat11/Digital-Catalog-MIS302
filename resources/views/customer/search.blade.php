@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Search — TechVault')
+@section('title', 'Search — Mood Set-Up Studio')
 
 @push('styles')
 <style>
@@ -38,6 +38,23 @@
     letter-spacing: -1px;
     text-transform: uppercase;
     line-height: 1.1;
+}
+
+/* ── PAGE LAYOUT (sidebar + results) ── */
+.search-layout {
+    display: flex;
+    gap: 2.5rem;
+    align-items: flex-start;
+    margin-top: 3rem;
+    margin-bottom: 5rem;
+}
+.search-sidebar-wrap {
+    width: 260px;
+    flex-shrink: 0;
+}
+.search-results {
+    flex: 1;
+    min-width: 0; /* let long content/wrapped grids shrink instead of overflowing */
 }
 
 /* ── TACTILE FILTER LIST ── */
@@ -103,27 +120,67 @@
     margin: 0 auto 1.5rem;
     border: 1px solid rgba(0,0,0,0.02);
 }
+
+/* ══════════════════════════════════════════════
+   📱 RESPONSIVE
+   ══════════════════════════════════════════════ */
+
+/* Tablet: sidebar drops above the results instead of squeezing beside them */
+@media (max-width: 900px) {
+    .search-layout {
+        flex-direction: column;
+        gap: 1.5rem;
+        margin-top: 1.75rem;
+        margin-bottom: 3rem;
+    }
+    .search-sidebar-wrap {
+        width: 100%;
+    }
+    .search-sidebar { padding: 1.15rem; }
+}
+
+/* Phone: filters become a horizontal chip row so they don't eat the screen */
+@media (max-width: 600px) {
+    .search-title-main { font-size: 1.5rem; }
+    .search-meta-header { margin-bottom: 1.5rem; }
+
+    .filter-list {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+    .filter-row-item {
+        padding: 8px 12px;
+        font-size: 0.75rem;
+        flex: 1 1 auto;
+        justify-content: center;
+        white-space: nowrap;
+    }
+
+    .empty-state { padding: 3.5rem 1.25rem; }
+    .empty-icon-wrap { width: 56px; height: 56px; }
+}
 </style>
 @endpush
 
 @section('content')
 
-<div style="display:flex; gap:2.5rem; align-items:flex-start; margin-top: 3rem; margin-bottom: 5rem;">
+<div class="search-layout">
 
     {{-- SIDEBAR FILTERS --}}
-    <aside style="width:260px; flex-shrink:0;">
+    <aside class="search-sidebar-wrap">
         <div class="search-sidebar">
             <p style="font-family:'Syne', sans-serif; font-weight:800; text-transform: uppercase; margin-bottom:1.5rem; font-size:0.75rem; letter-spacing: 2px; color: #1d1d1f;">FILTER NODES</p>
-            
+
             <form action="{{ route('search') }}" method="GET" id="filterForm">
                 <input type="hidden" name="q" value="{{ $query }}">
-                
+
                 <div class="filter-list">
                     <label class="filter-row-item">
                         <input type="radio" name="category" value="" {{ !$categoryId ? 'checked' : '' }} onchange="document.getElementById('filterForm').submit()">
                         <span>All Categories</span>
                     </label>
-                    
+
                     @foreach($categories as $cat)
                     <label class="filter-row-item">
                         <input type="radio" name="category" value="{{ $cat->id }}" {{ $categoryId == $cat->id ? 'checked' : '' }} onchange="document.getElementById('filterForm').submit()">
@@ -136,16 +193,16 @@
     </aside>
 
     {{-- RESULTS AREA --}}
-    <div style="flex:1;">
-        
+    <div class="search-results">
+
         {{-- Search Meta Header --}}
         <div class="search-meta-header">
-            
+
             <h1 class="search-title-main">
                 {{ $query ? "Results for \"$query\"" : 'All Products' }}
             </h1>
             <p style="color:var(--muted); font-size:0.8rem; font-weight: 700; text-transform: uppercase; margin-top:0.4rem; letter-spacing: 1px;">
-                {{ $products->count() }} result(s) 
+                {{ $products->count() }} result(s)
             </p>
         </div>
 

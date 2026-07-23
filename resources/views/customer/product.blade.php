@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', $product->product_name . ' — TechVault')
+@section('title', $product->product_name . ' — Mood Set-Up Studio')
 
 @push('styles')
 <style>
@@ -95,13 +95,57 @@
     flex: 1;
     justify-content: center;
 }
+
+/* ── PRODUCT DETAIL LAYOUT (image + info) ── */
+.product-detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    margin-bottom: 6rem;
+    align-items: start;
+}
+
+.product-detail-breadcrumb {
+    margin-bottom: 2.5rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    overflow-wrap: break-word;
+}
+
+/* ══════════════════════════════════════════════
+   📱 RESPONSIVE
+   ══════════════════════════════════════════════ */
+
+/* Tablet: image and info still side by side but tighter */
+@media (max-width: 1024px) {
+    .product-detail-grid { gap: 2.5rem; }
+}
+
+/* Phone/small tablet: image goes full-width on top, info stacks below */
+@media (max-width: 800px) {
+    .product-detail-grid {
+        grid-template-columns: 1fr;
+        gap: 1.75rem;
+        margin-bottom: 3.5rem;
+    }
+    .product-detail-breadcrumb { margin-bottom: 1.5rem; }
+}
+
+@media (max-width: 480px) {
+    .product-price { font-size: 1.7rem; }
+    .spec-table td { padding: 0.9rem 1rem; }
+    .action-grid { flex-direction: column; }
+    .qr-takeaway-capsule { flex-direction: column; text-align: center; }
+}
 </style>
 @endpush
 
 @section('content')
 
 {{-- Breadcrumbs --}}
-<div style="margin-bottom:2.5rem; font-size:0.75rem; font-weight:700; text-transform: uppercase; letter-spacing: 1px;">
+<div class="product-detail-breadcrumb">
     <a href="{{ route('home') }}" style="color:var(--muted); text-decoration:none;">Home</a>
     <span style="margin:0 0.5rem; color:var(--muted);">/</span>
     <a href="{{ route('category.show', $product->category) }}" style="color:var(--muted); text-decoration:none;">{{ $product->category->category_name }}</a>
@@ -110,13 +154,22 @@
 </div>
 
 {{-- Main Details Grid --}}
-<div style="display:grid; grid-template-columns:1fr 1fr; gap:4rem; margin-bottom:6rem; align-items: start;">
+<div class="product-detail-grid">
 
     {{-- Product Image Cover --}}
     <div>
-        <div class="product-card" style="background:#ffffff; border-radius:24px; padding:0; overflow:hidden; aspect-ratio:1; box-shadow: 0 10px 40px rgba(0,0,0,0.03);">
-            <img src="{{ asset('storage/'.$product->product_image) }}" alt="{{ $product->product_name }}"
-                 style="width:100%; height:100%; object-fit:cover;">
+        <div class="product-card" style="background:#ffffff; border-radius:24px; padding:2rem; overflow:hidden; aspect-ratio:1; box-shadow: 0 10px 40px rgba(0,0,0,0.03); display:flex; align-items:center; justify-content:center;">
+            @php
+                $img = $product->product_image;
+                $isUrl = Str::startsWith($img, ['http://', 'https://']);
+                // Use asset() directly for files in public/products (No 'storage/')
+                $finalPath = $isUrl ? $img : asset($img);
+            @endphp
+            
+            <img src="{{ $finalPath }}" 
+                 alt="{{ $product->product_name }}"
+                 style="max-width:100%; max-height:100%; object-fit:contain;"
+                 onerror="this.onerror=null; this.src='{{ asset('products/placeholder.jpg') }}';">
         </div>
     </div>
 
@@ -125,7 +178,7 @@
         <p class="product-meta-brand">{{ $product->brand }}</p>
         <h1 class="product-title">{{ $product->product_name }}</h1>
 
-        <div style="display:flex; align-items:center; gap:1.5rem; margin-bottom:2rem;">
+        <div style="display:flex; align-items:center; gap:1.5rem; flex-wrap:wrap; margin-bottom:2rem;">
             <span class="product-price">${{ number_format($product->price, 2) }}</span>
             @if($product->status === 'available')
                 <span class="chip chip-green" style="font-size:0.65rem;">In Stock ({{ $product->stock_quantity }} units)</span>
