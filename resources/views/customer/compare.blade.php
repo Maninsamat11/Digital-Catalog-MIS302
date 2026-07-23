@@ -153,8 +153,8 @@
         
         {{-- Header Section --}}
         <div class="compare-meta-header">
-            <span class="compare-title-sub">SPECIFICATION ANALYSIS MATRIX</span>
-            <h1 class="compare-title-main">Compare Assets</h1>
+            <span class="compare-title-sub">CHOOSE THE BEST </span>
+            <h1 class="compare-title-main">Compare Products</h1>
         </div>
 
         {{-- Frosted Comparison Card --}}
@@ -163,12 +163,22 @@
                 <table class="matrix-table">
                     <thead>
                         <tr>
-                            <th class="spec-label">Hardware Node</th>
+                            <th class="spec-label">Products</th>
                             @foreach($products as $p)
                                 <th style="text-align: center;">
                                     <a href="{{ route('product.show', $p) }}" style="text-decoration:none;">
-                                        <div class="matrix-img-box">
-                                            <img src="{{ asset('storage/'.$p->product_image) }}" alt="{{ $p->product_name }}">
+                                        <div class="matrix-img-box" style="display: flex; align-items: center; justify-content: center; padding: 10px; background: #fff;">
+                                            @php
+                                                $img = trim($p->product_image);
+                                                $isUrl = Str::startsWith($img, ['http', 'https']);
+                                                // Use asset() directly for public folder, or the URL directly
+                                                $finalPath = $isUrl ? $img : asset($img);
+                                            @endphp
+                                            
+                                            <img src="{{ $finalPath }}" 
+                                                alt="{{ $p->product_name }}"
+                                                style="max-width: 100%; max-height: 100%; object-fit: contain;"
+                                                onerror="this.onerror=null; this.src='{{ asset('products/placeholder.jpg') }}';">
                                         </div>
                                         <p class="matrix-p-name">{{ $p->product_name }}</p>
                                     </a>
@@ -204,13 +214,13 @@
                             @endforeach
                         </tr>
                         <tr>
-                            <td class="spec-label">System State</td>
+                            <td class="spec-label">Availability</td>
                             @foreach($products as $p)
                                 <td style="text-align: center;">
                                     @if($p->status === 'available')
-                                        <span class="chip chip-green" style="font-size:0.65rem;">Active</span>
+                                        <span class="chip chip-green" style="font-size:0.65rem;">Instock</span>
                                     @else
-                                        <span class="chip chip-red" style="font-size:0.65rem;">Offline</span>
+                                        <span class="chip chip-red" style="font-size:0.65rem;">Out of Stock</span>
                                     @endif
                                 </td>
                             @endforeach
@@ -218,7 +228,7 @@
                         <tr>
                             <td class="spec-label">Specifications</td>
                             @foreach($products as $p)
-                                <td class="spec-val" style="color: var(--muted); line-height: 1.5; font-size: 0.8rem; max-width: 250px; text-align: left; padding: 1.5rem;">
+                                <td class="spec-val" style="color: var(--muted); line-height: 1.5; font-size: 0.8rem; max-width: 250px; text-align: center; padding: 1.5rem;">
                                     {{ Str::limit($p->description, 150) }}
                                 </td>
                             @endforeach
@@ -227,7 +237,7 @@
                             <td></td>
                             @foreach($products as $p)
                                 <td style="text-align: center; padding-top: 2rem;">
-                                    <a href="{{ route('product.show', $p) }}" class="btn btn-apple secondary btn-sm" style="font-size: 0.7rem;">Initialize Node →</a>
+                                    <a href="{{ route('product.show', $p) }}" class="btn btn-apple secondary btn-sm" style="font-size: 0.7rem;">Details →</a>
                                 </td>
                             @endforeach
                         </tr>
@@ -239,7 +249,7 @@
         {{-- Bottom Utility Controls --}}
         <div style="text-align:center; margin-bottom: 5rem;">
             <button class="btn btn-apple primary" onclick="clearCompare(); window.location='{{ route('home') }}'">
-                FLUSH MATRIX & EXPLORE MORE
+                EXPLORE MORE
             </button>
         </div>
     </div>
